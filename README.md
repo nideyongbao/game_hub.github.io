@@ -32,6 +32,10 @@ game_hub/
 │       ├── game.js
 │       ├── style.css
 │       └── ...
+│   └── gomoku_game/        # 五子棋游戏
+│       ├── index.html
+│       ├── script.js
+│       └── style.css
 ├── index.html              # 统一入口页面
 ├── style.css               # 入口页面样式
 └── README.md               # 项目说明文档
@@ -55,6 +59,15 @@ game_hub/
 - 智能 AI 对手
 - 完整的游戏规则
 - 流畅的动画效果
+
+### ⚫ 五子棋 AI
+经典的五子棋对战游戏。挑战智能 AI，体验博弈的乐趣。
+
+**特点：**
+- 智能 AI 对手（Minimax 算法）
+- 多种难度选择
+- 悔棋功能
+- 现代化 UI 设计
 
 ## 如何运行
 

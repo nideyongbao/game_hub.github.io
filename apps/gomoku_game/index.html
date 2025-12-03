@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋 AI 对战 - Gomoku</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-gradient"></div>
+
+    <div class="container">
+        <header class="header">
+            <a href="../../index.html" class="back-button">← 返回游戏中心</a>
+            <h1 class="title">⚫ 五子棋 AI 对战</h1>
+            <p class="subtitle">挑战智能 AI，体验博弈的乐趣</p>
+        </header>
+
+        <div class="game-container">
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <div class="control-group">
+                    <label for="difficulty">难度选择：</label>
+                    <select id="difficulty" class="difficulty-select">
+                        <option value="1">简单 (Easy)</option>
+                        <option value="2" selected>中等 (Medium)</option>
+                        <option value="3">困难 (Hard)</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button id="undoBtn" class="btn btn-secondary">
+                        <span class="btn-icon">↶</span>
+                        <span>悔棋</span>
+                    </button>
+                    <button id="resetBtn" class="btn btn-primary">
+                        <span class="btn-icon">⟳</span>
+                        <span>重新开始</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 游戏状态 -->
+            <div class="status-panel">
+                <div class="status-item">
+                    <span class="status-label">当前回合：</span>
+                    <span id="currentPlayer" class="status-value">
+                        <span class="player-indicator black">●</span> 黑方 (玩家)
+                    </span>
+                </div>
+                <div class="status-item">
+                    <span id="gameStatus" class="game-status">游戏进行中...</span>
+                </div>
+            </div>
+
+            <!-- 游戏棋盘 -->
+            <div class="board-wrapper">
+                <div id="board" class="board"></div>
+            </div>
+
+            <!-- 游戏说明 -->
+            <div class="info-panel">
+                <h3>游戏说明</h3>
+                <ul>
+                    <li>玩家执黑棋先行，AI 执白棋</li>
+                    <li>率先在横、竖、斜任意方向连成五子者获胜</li>
+                    <li>可以使用悔棋功能撤销上一步</li>
+                    <li>选择不同难度挑战更强的 AI</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
