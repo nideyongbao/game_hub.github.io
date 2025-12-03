@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蜘蛛纸牌 - Spider Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-container">
+        <header class="header">
+            <a href="../../index.html" class="back-button">← 返回游戏中心</a>
+            <div class="score-board">
+                <div class="score-item">Score: <span id="score">500</span></div>
+                <div class="score-item">Moves: <span id="moves">0</span></div>
+            </div>
+            <div class="controls">
+                <button id="newGameBtn" class="btn">New Game</button>
+                <button id="undoBtn" class="btn">Undo</button>
+            </div>
+        </header>
+
+        <div class="game-board">
+            <div class="top-row">
+                <div class="stock-pile" id="stock">
+                    <!-- Stock cards will be placed here -->
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                </div>
+                <div class="foundation" id="foundation">
+                    <!-- Completed piles will go here -->
+                </div>
+            </div>
+
+            <div class="tableau" id="tableau">
+                <!-- 10 columns of cards will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Modal -->
+    <div id="difficultyModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Difficulty</h2>
+            <button class="difficulty-btn" data-suits="1">Easy (1 Suit)</button>
+            <button class="difficulty-btn" data-suits="2">Medium (2 Suits)</button>
+            <button class="difficulty-btn" data-suits="4">Hard (4 Suits)</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

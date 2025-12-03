@@ -1,0 +1,260 @@
+:root {
+    --bg-color: #006400;
+    --card-width: 80px;
+    --card-height: 112px;
+    --card-gap: 10px;
+    --text-color: #ffffff;
+    --accent-color: #ffd700;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-container {
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-button {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.back-button:hover {
+    color: white;
+}
+
+.score-board {
+    display: flex;
+    gap: 20px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.game-board {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    height: var(--card-height);
+}
+
+.stock-pile {
+    position: relative;
+    width: var(--card-width);
+    height: var(--card-height);
+    cursor: pointer;
+}
+
+.foundation {
+    display: flex;
+    gap: var(--card-gap);
+    height: var(--card-height);
+}
+
+.foundation-slot {
+    width: var(--card-width);
+    height: var(--card-height);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.tableau {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    padding-top: 10px;
+}
+
+.column {
+    position: relative;
+    width: var(--card-width);
+    height: 100%;
+}
+
+/* Card Styles */
+.card {
+    width: var(--card-width);
+    height: var(--card-height);
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: grab;
+    transition: transform 0.1s;
+}
+
+.card.dragging {
+    cursor: grabbing;
+    z-index: 1000 !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.card-back {
+    width: var(--card-width);
+    height: var(--card-height);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border: 2px solid white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stock-pile .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.card.red {
+    color: #e74c3c;
+}
+
+.card.black {
+    color: #2c3e50;
+}
+
+.card-top,
+.card-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+
+.card-bottom {
+    transform: rotate(180deg);
+}
+
+.suit-large {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    opacity: 0.2;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    color: #333;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 300px;
+}
+
+.modal h2 {
+    margin-bottom: 20px;
+}
+
+.difficulty-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    background: #006400;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.difficulty-btn:hover {
+    background: #004d00;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1000px) {
+    :root {
+        --card-width: 60px;
+        --card-height: 84px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --card-width: 45px;
+        --card-height: 63px;
+    }
+
+    .score-board {
+        font-size: 14px;
+        gap: 10px;
+    }
+}
