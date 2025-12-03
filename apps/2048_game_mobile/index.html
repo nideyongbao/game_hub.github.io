@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <title>2048 - 移动版</title>
+    <meta name="description" content="专为移动设备优化的 2048 小游戏，支持安装到主屏幕">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>2048</h1>
+            <div class="score-container">
+                <div class="score-box">
+                    <div class="score-label">分数</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">最高分</div>
+                    <div class="score-value" id="best-score">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-intro">
+            <p><strong>滑动</strong>移动方块，相同数字会合并！</p>
+            <button class="new-game-btn" id="new-game-btn">新游戏</button>
+        </div>
+
+        <div class="game-container">
+            <div class="grid-container" id="grid-container"></div>
+            <div class="tile-container" id="tile-container"></div>
+        </div>
+
+        <div class="install-prompt" id="install-prompt">
+            <div class="install-content">
+                <svg class="install-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <div class="install-text">
+                    <div class="install-title">安装到主屏幕</div>
+                    <div class="install-desc">像原生应用一样使用</div>
+                </div>
+                <button class="install-btn" id="install-btn">安装</button>
+                <button class="install-close" id="install-close">×</button>
+            </div>
+        </div>
+
+        <div class="game-message" id="game-message">
+            <div class="message-content">
+                <p id="message-text">游戏结束！</p>
+                <button class="retry-btn" id="retry-btn">重新开始</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        // PWA 安装提示
+        let deferredPrompt;
+        const installPrompt = document.getElementById('install-prompt');
+        const installBtn = document.getElementById('install-btn');
+        const installClose = document.getElementById('install-close');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // 检查是否已经显示过安装提示
+            if (!localStorage.getItem('install-prompt-shown')) {
+                setTimeout(() => {
+                    installPrompt.classList.add('show');
+                }, 3000);
+            }
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('用户接受了安装');
+            }
+
+            deferredPrompt = null;
+            installPrompt.classList.remove('show');
+            localStorage.setItem('install-prompt-shown', 'true');
+        });
+
+        installClose.addEventListener('click', () => {
+            installPrompt.classList.remove('show');
+            localStorage.setItem('install-prompt-shown', 'true');
+        });
+
+        // 注册 Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => {
+                console.log('Service Worker 注册成功');
+            }).catch((error) => {
+                console.log('Service Worker 注册失败:', error);
+            });
+        }
+    </script>
+</body>
+
+</html>

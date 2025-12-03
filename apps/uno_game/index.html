@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1e7e34">
+    <title>UNO 卡牌游戏</title>
+    <meta name="description" content="经典UNO卡牌游戏，支持AI对手">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- 顶部 AI 玩家手牌 -->
+        <div class="ai-hand" id="ai-hand">
+            <div class="player-label">AI 对手</div>
+            <div class="card-count" id="ai-card-count">7 张牌</div>
+            <div class="ai-cards-container" id="ai-cards-container"></div>
+        </div>
+
+        <!-- 游戏桌面 -->
+        <div class="table">
+            <!-- 抽牌堆 -->
+            <div class="draw-pile" id="draw-pile">
+                <div class="pile-cards">
+                    <div class="card card-back"></div>
+                    <div class="card card-back offset-1"></div>
+                    <div class="card card-back offset-2"></div>
+                </div>
+                <div class="pile-label">抽牌</div>
+            </div>
+
+            <!-- 弃牌堆 -->
+            <div class="discard-pile" id="discard-pile">
+                <div class="pile-label">出牌区</div>
+            </div>
+
+            <!-- 游戏信息 -->
+            <div class="game-info">
+                <div class="current-turn" id="current-turn">你的回合</div>
+                <button class="restart-btn" id="restart-btn" title="重新开始">🔄 重新开始</button>
+            </div>
+        </div>
+
+        <!-- 玩家手牌 -->
+        <div class="player-hand" id="player-hand">
+            <div class="player-label">你的手牌</div>
+            <div class="cards-container" id="cards-container"></div>
+            <button class="uno-button" id="uno-button">UNO!</button>
+        </div>
+
+        <!-- 颜色选择对话框 -->
+        <div class="color-picker" id="color-picker">
+            <div class="picker-content">
+                <h3>选择颜色</h3>
+                <div class="color-options">
+                    <div class="color-option red" data-color="red">红色</div>
+                    <div class="color-option" data-color="yellow" style="background: #ffd700; color: #333;">黄色</div>
+                    <div class="color-option" data-color="green" style="background: #1e7e34; color: #fff;">绿色</div>
+                    <div class="color-option" data-color="blue" style="background: #007bff; color: #fff;">蓝色</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏结束对话框 -->
+        <div class="game-over" id="game-over">
+            <div class="game-over-content">
+                <h2 id="winner-text">游戏结束</h2>
+                <p id="winner-subtitle">恭喜获胜！</p>
+                <button class="btn-restart" id="btn-restart">再玩一局</button>
+            </div>
+        </div>
+
+        <!-- 消息提示 -->
+        <div class="message-toast" id="message-toast"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
