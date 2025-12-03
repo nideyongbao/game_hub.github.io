@@ -76,7 +76,6 @@ php -S localhost:8000
 - `manifest.json` - PWA 配置文件
 - `sw.js` - Service Worker（离线缓存）
 - `icon-192.png` - 应用图标 (192x192)
-- `icon-512.png` - 应用图标 (512x512)
 
 ## 浏览器兼容性
 
