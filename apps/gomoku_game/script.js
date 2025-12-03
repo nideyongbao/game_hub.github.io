@@ -11,8 +11,14 @@ let gameOver = false;
 let moveHistory = [];
 let aiDepth = 2; // 默认中等难度
 
+// ===== Canvas 相关 =====
+let canvas;
+let ctx;
+let cellSize;
+let padding;
+let boardSize;
+
 // ===== DOM 元素 =====
-const boardElement = document.getElementById('board');
 const currentPlayerElement = document.getElementById('currentPlayer');
 const gameStatusElement = document.getElementById('gameStatus');
 const difficultySelect = document.getElementById('difficulty');
@@ -27,38 +33,153 @@ function initGame() {
     gameOver = false;
     moveHistory = [];
 
-    // 创建棋盘 DOM
-    boardElement.innerHTML = '';
-    for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.dataset.index = i;
+    // 初始化 Canvas
+    canvas = document.getElementById('board');
+    ctx = canvas.getContext('2d');
 
-        // 添加星位标记 (天元和四个星位)
-        const row = Math.floor(i / BOARD_SIZE);
-        const col = i % BOARD_SIZE;
-        if ((row === 7 && col === 7) || // 天元
-            (row === 3 && col === 3) || (row === 3 && col === 11) ||
-            (row === 11 && col === 3) || (row === 11 && col === 11)) {
-            cell.classList.add('star');
-        }
+    // 设置 Canvas 尺寸
+    const maxSize = Math.min(600, window.innerWidth * 0.9);
+    boardSize = maxSize;
+    padding = boardSize * 0.05;
+    cellSize = (boardSize - 2 * padding) / (BOARD_SIZE - 1);
 
-        cell.addEventListener('click', handleCellClick);
-        boardElement.appendChild(cell);
-    }
+    canvas.width = boardSize;
+    canvas.height = boardSize;
+    canvas.style.width = boardSize + 'px';
+    canvas.style.height = boardSize + 'px';
+
+    // 绘制棋盘
+    drawBoard();
+
+    // 添加点击事件
+    canvas.addEventListener('click', handleCanvasClick);
 
     updateStatus();
     updateButtons();
 }
 
-// ===== 处理点击事件 =====
-function handleCellClick(e) {
+// ===== 绘制棋盘 =====
+function drawBoard() {
+    // 清空画布
+    ctx.clearRect(0, 0, boardSize, boardSize);
+
+    // 绘制背景
+    ctx.fillStyle = '#deb887';
+    ctx.fillRect(0, 0, boardSize, boardSize);
+
+    // 绘制网格线
+    ctx.strokeStyle = '#8b7355';
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i < BOARD_SIZE; i++) {
+        const pos = padding + i * cellSize;
+
+        // 横线
+        ctx.beginPath();
+        ctx.moveTo(padding, pos);
+        ctx.lineTo(boardSize - padding, pos);
+        ctx.stroke();
+
+        // 竖线
+        ctx.beginPath();
+        ctx.moveTo(pos, padding);
+        ctx.lineTo(pos, boardSize - padding);
+        ctx.stroke();
+    }
+
+    // 绘制星位
+    const starPositions = [
+        [3, 3], [3, 7], [3, 11],
+        [7, 3], [7, 7], [7, 11],
+        [11, 3], [11, 7], [11, 11]
+    ];
+
+    ctx.fillStyle = '#6b5745';
+    starPositions.forEach(([row, col]) => {
+        const x = padding + col * cellSize;
+        const y = padding + row * cellSize;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // 重新绘制所有棋子
+    redrawPieces();
+}
+
+// ===== 重新绘制所有棋子 =====
+function redrawPieces() {
+    moveHistory.forEach((move, index) => {
+        const isLastMove = index === moveHistory.length - 1;
+        drawPiece(move.row, move.col, move.player, isLastMove);
+    });
+}
+
+// ===== 绘制棋子 =====
+function drawPiece(row, col, player, isLastMove = false) {
+    const x = padding + col * cellSize;
+    const y = padding + row * cellSize;
+    const radius = cellSize * 0.4;
+
+    // 绘制阴影
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+
+    // 绘制棋子
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+
+    if (player === BLACK) {
+        // 黑色棋子渐变
+        const gradient = ctx.createRadialGradient(
+            x - radius * 0.3, y - radius * 0.3, 0,
+            x, y, radius
+        );
+        gradient.addColorStop(0, '#3a3a3a');
+        gradient.addColorStop(1, '#1a1a1a');
+        ctx.fillStyle = gradient;
+    } else {
+        // 白色棋子渐变
+        const gradient = ctx.createRadialGradient(
+            x - radius * 0.3, y - radius * 0.3, 0,
+            x, y, radius
+        );
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(1, '#f5f5f5');
+        ctx.fillStyle = gradient;
+    }
+
+    ctx.fill();
+    ctx.restore();
+
+    // 绘制最后一步标记
+    if (isLastMove) {
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// ===== 处理 Canvas 点击 =====
+function handleCanvasClick(e) {
     if (gameOver || currentPlayer !== BLACK) return;
 
-    const index = parseInt(e.target.dataset.index);
-    const row = Math.floor(index / BOARD_SIZE);
-    const col = index % BOARD_SIZE;
+    const rect = canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
 
+    // 转换为棋盘坐标
+    const col = Math.round((clickX - padding) / cellSize);
+    const row = Math.round((clickY - padding) / cellSize);
+
+    // 检查是否在棋盘范围内
+    if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE) return;
+
+    // 检查该位置是否已有棋子
     if (board[row][col] !== EMPTY) return;
 
     makeMove(row, col, BLACK);
@@ -78,19 +199,8 @@ function makeMove(row, col, player) {
     board[row][col] = player;
     moveHistory.push({ row, col, player });
 
-    // 更新 DOM
-    const index = row * BOARD_SIZE + col;
-    const cell = boardElement.children[index];
-    cell.classList.add('occupied');
-
-    const piece = document.createElement('div');
-    piece.className = `piece ${player === BLACK ? 'black' : 'white'}`;
-
-    // 移除之前的最后一步标记
-    document.querySelectorAll('.piece.last-move').forEach(p => p.classList.remove('last-move'));
-    piece.classList.add('last-move');
-
-    cell.appendChild(piece);
+    // 重绘棋盘
+    drawBoard();
 
     // 检查胜利
     if (checkWin(row, col, player)) {
@@ -412,32 +522,17 @@ function undo() {
     // 撤销 AI 的移动
     const aiMove = moveHistory.pop();
     board[aiMove.row][aiMove.col] = EMPTY;
-    const aiIndex = aiMove.row * BOARD_SIZE + aiMove.col;
-    const aiCell = boardElement.children[aiIndex];
-    aiCell.classList.remove('occupied');
-    aiCell.innerHTML = '';
 
     // 撤销玩家的移动
     const playerMove = moveHistory.pop();
     board[playerMove.row][playerMove.col] = EMPTY;
-    const playerIndex = playerMove.row * BOARD_SIZE + playerMove.col;
-    const playerCell = boardElement.children[playerIndex];
-    playerCell.classList.remove('occupied');
-    playerCell.innerHTML = '';
-
-    // 恢复最后一步标记
-    if (moveHistory.length > 0) {
-        const lastMove = moveHistory[moveHistory.length - 1];
-        const lastIndex = lastMove.row * BOARD_SIZE + lastMove.col;
-        const lastCell = boardElement.children[lastIndex];
-        const lastPiece = lastCell.querySelector('.piece');
-        if (lastPiece) {
-            lastPiece.classList.add('last-move');
-        }
-    }
 
     currentPlayer = BLACK;
     gameOver = false;
+
+    // 重绘棋盘
+    drawBoard();
+
     updateStatus();
     updateButtons();
 }
@@ -466,6 +561,29 @@ function updateStatus() {
 function updateButtons() {
     undoBtn.disabled = moveHistory.length < 2 || gameOver;
 }
+
+// ===== 窗口大小改变时重绘 =====
+window.addEventListener('resize', () => {
+    if (canvas) {
+        initGame();
+        // 恢复之前的游戏状态
+        const tempHistory = [...moveHistory];
+        const tempPlayer = currentPlayer;
+        const tempGameOver = gameOver;
+
+        board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(EMPTY));
+        moveHistory = [];
+
+        tempHistory.forEach(move => {
+            board[move.row][move.col] = move.player;
+            moveHistory.push(move);
+        });
+
+        currentPlayer = tempPlayer;
+        gameOver = tempGameOver;
+        drawBoard();
+    }
+});
 
 // ===== 事件监听 =====
 difficultySelect.addEventListener('change', (e) => {
